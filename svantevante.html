@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flervalsfrågor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .question {
+            margin-bottom: 20px;
+        }
+        .options button {
+            display: block;
+            margin: 5px 0;
+            padding: 10px;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+        }
+        .options button.correct {
+            background-color: lightgreen;
+        }
+        .options button.wrong {
+            background-color: lightcoral;
+        }
+        .hidden {
+            display: none;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 1.5em;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Islamiska Frågor</h1>
+    <div id="quiz"></div>
+    <div id="result" class="hidden"></div>
+
+    <script>
+        const questions = [
+            { question: "Vem var Ismail?", options: ["Ismail var Abrahams son", "Ismail var en kung", "Ismail var en profet", "Ismail var en stad"], answer: 0 },
+            { question: "Vad är det arabiska ordet för Gud?", options: ["Allah", "Jahve", "Buddha", "Krishna"], answer: 0 },
+            { question: "Vad kallas en person som tror på islam?", options: ["Muslim", "Kristen", "Hindu", "Jude"], answer: 0 },
+            { question: "Vem är den största profeten enligt islam?", options: ["Muhammed", "Moses", "Jesus", "Abraham"], answer: 0 },
+            { question: "Vad kallas islams heliga bok?", options: ["Koranen", "Bibeln", "Toran", "Bhagavad Gita"], answer: 0 },
+            { question: "När och var föddes Muhammed?", options: ["År 570 i Mekka", "År 570 i Medina", "År 600 i Jerusalem", "År 632 i Mekka"], answer: 0 },
+            { question: "Varför var ärkeängeln Gabriel viktig för Muhammed?", options: ["Gabriel förmedlade Guds budskap till Muhammed och hjälpte honom att skriva ner Koranen", "Gabriel var Muhammeds vän", "Gabriel hjälpte Muhammed att sprida islam", "Gabriel grundade Medina"], answer: 0 },
+            { question: "Vilken titel har Muhammeds efterträdare?", options: ["Kalif", "Imam", "Mulla", "Shejk"], answer: 0 },
+            { question: "Vilket land i Europa erövrades av muslimerna på 700-talet?", options: ["Spanien", "Frankrike", "Italien", "Grekland"], answer: 0 },
+            { question: "Vilket arabiskt rike bildades under 1400-talet i nuvarande Turkiet?", options: ["Osmanska riket", "Abbasidiska kalifatet", "Umayyadiska kalifatet", "Seljukiska riket"], answer: 0 },
+            { question: "Vad kallas de olika kapitlen i Koranen?", options: ["Suror", "Verser", "Hadither", "Ayat"], answer: 0 },
+            { question: "Hur många kapitel finns det i Koranen?", options: ["114", "100", "99", "120"], answer: 0 },
+            { question: "Hur kom Koranen till?", options: ["Genom Guds budskap som Muhammed fick från ängeln Gabriel", "Den skrevs av Muhammed", "Den skrevs av kaliferna efter Muhammeds död", "Den skrevs av Muhammeds lärjungar"], answer: 0 },
+            { question: "Kan du nämna något som en muslim inte äter eller dricker?", options: ["Muslimer äter inte fläskkött och dricker inte alkohol", "Muslimer äter inte nötkött", "Muslimer äter inte kyckling", "Muslimer äter inte fisk"], answer: 0 },
+            { question: "Vad menas med en burka?", options: ["Ett heltäckande klädesplagg som vissa muslimska kvinnor bär", "Ett bönekläde", "En huvudduk", "En moské"], answer: 0 },
+            { question: "Vad kallas Muhammeds vanor och seder?", options: ["Sunna", "Hadither", "Sharia", "Kalifat"], answer: 0 },
+            { question: "Vad är sharia?", options: ["Lagar och regler baserade på Koranen och Muhammeds liv", "En helig byggnad", "En trosbekännelse", "Ett klädesplagg"], answer: 0 },
+            { question: "Vilka är islams fem grundpelare?", options: ["Trosbekännelsen, bönen, allmosan, fastan och vallfärden", "Bönen, fastan, vallfärden, Jihad och trosbekännelsen", "Fastan, vallfärden, allmosan, Jihad och bönen", "Vallfärden, allmosan, Jihad, fastan och trosbekännelsen"], answer: 0 },
+            { question: "Hur lyder den muslimska trosbekännelsen?", options: ["Det finns ingen Gud utom Allah, och Muhammed är hans profet", "Allah är större än allt", "Bara Allah är helig", "Muhammed är den ende profeten"], answer: 0 },
+            { question: "Vad menas med en vallfärd?", options: ["En religiös resa till Mekka som muslimer bör göra en gång i livet om de kan", "En religiös resa till Medina", "En resa till en moské", "En resa för att sprida islam"], answer: 0 },
+            { question: "Vad är Kaba för något?", options: ["En helig byggnad i Mekka som muslimer vänder sig mot under bön", "En moské i Medina", "En minaret", "Ett klädesplagg"], answer: 0 },
+            { question: "Vad är en minaret för något?", options: ["Ett torn på en moské varifrån man kallar till bön", "Ett bönerum", "En religiös byggnad", "Ett område i Mekka"], answer: 0 },
+            { question: "Vilken veckodag är muslimernas vilodag?", options: ["Fredag", "Lördag", "Söndag", "Onsdag"], answer: 0 },
+            { question: "Hur gammal brukar ett muslimskt barn vara när det får sitt namn?", options: ["Sju dagar gammalt", "En månad gammalt", "En vecka gammalt", "Fyra dagar gammalt"], answer: 0 },
+            { question: "Vad menas med månggifte?", options: ["Att en muslimsk man får ha upp till fyra fruar, om han behandlar dem rättvist", "Att en muslimsk man får gifta sig med flera kvinnor utan regler", "Att en man kan gifta sig med flera kvinnor i olika länder", "Att kvinnor kan ha flera män"], answer: 0 },
+            { question: "Varför anser muslimer att Ramadan är helig?", options: ["För att det var då Muhammed fick Guds budskap via Gabriel", "För att det är en viktig fastemånad", "För att det är en tradition", "För att det är årets sista månad"], answer: 0 },
+            { question: "Vilken högtid firar muslimerna när Ramadan är slut?", options: ["Id al-Fitr", "Id al-Adha", "Ashura", "Laylat al-Qadr"], answer: 0 },
+            { question: "Vad menas med en allmosa?", options: ["Att ge gåvor till fattiga och behövande", "Att ge presenter vid högtider", "Att skänka till moskén", "Att donera anonymt"], answer: 0 },
+            { question: "Vad heter den månad som är muslimernas fastemånad och hur går den till?", options: ["Ramadan. Muslimer fastar från soluppgång till solnedgång", "Ramadan. Muslimer fastar hela dagen", "Shawwal. Muslimer äter inget under dagen", "Ramadan. Muslimer fastar endast vid fullmåne"], answer: 0 },
+            { question: "Varför bytte staden Jatrib namn till Medina?", options: ["För att Medina betyder 'profetens stad' och blev Muhammeds hem", "För att Medina är en helig stad", "För att Jatrib blev en handelsstad", "För att Medina ligger nära Mekka"], answer: 0 },
+            { question: "När gjorde Muhammed sin sista resa till Mekka?", options: ["År 632", "År 622", "År 600", "År 570"], answer: 0 },
+            { question: "Hur firas Id al-Adha?", options: ["Genom att offra ett djur och dela köttet med fattiga", "Genom att fasta i en vecka", "Genom att be fem gånger om dagen", "Genom att resa till Medina"], answer: 0 },
+            { question: "Vilka två riktningar växte fram efter Muhammeds död?", options: ["Sunni och shia", "Sunni och sufi", "Shia och sufi", "Kalif och imam"], answer: 0 },
+            { question: "Förklara varför det blev en splittring mellan dessa båda grupper.", options: ["Sunni menade att ledaren skulle väljas, medan shia ansåg att ledaren skulle vara en släkting till Muhammed", "Sunni ansåg att alla kunde bli ledare, medan shia inte ville ha någon ledare", "Shia ville inte ha någon politisk ledare", "Sunni och shia var oense om bönepraktiker"], answer: 0 },
+            { question: "Vad är en kalif?", options: ["En politisk och religiös ledare efter Muhammed", "En imam som leder bönen", "En profet", "En grundare av islam"], answer: 0 },
+            { question: "Ordet imam kan ha två betydelser. Vilka?", options: ["En ledare i bönen och en religiös ledare för shiamuslimer", "En profet och en kalif", "En böneledare och en politisk ledare", "En lärare och en profet"], answer: 0 },
+            { question: "Hur har sunnimuslimerna fått sitt namn?", options: ["Från Muhammeds vanor och seder, kallat sunna", "Från en viktig stad i Saudiarabien", "Från en kalif som skapade sunna", "Från Koranens suror"], answer: 0 }
+        ];
+
+        const quizContainer = document.getElementById("quiz");
+        const resultContainer = document.getElementById("result");
+        let score = 0;
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function loadQuiz() {
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement("div");
+                questionDiv.classList.add("question");
+
+                const questionText = document.createElement("h3");
+                questionText.textContent = `${index + 1}. ${q.question}`;
+                questionDiv.appendChild(questionText);
+
+                const optionsDiv = document.createElement("div");
+                optionsDiv.classList.add("options");
+
+                // Shuffle options
+                const shuffledOptions = [...q.options];
+                shuffleArray(shuffledOptions);
+
+                shuffledOptions.forEach(option => {
+                    const button = document.createElement("button");
+                    button.textContent = option;
+                    button.onclick = () => handleAnswer(button, option === q.options[q.answer], index);
+                    optionsDiv.appendChild(button);
+                });
+
+                questionDiv.appendChild(optionsDiv);
+                quizContainer.appendChild(questionDiv);
+            });
+        }
+
+        function handleAnswer(button, isCorrect, questionIndex) {
+            const buttons = document.querySelectorAll(`.question:nth-child(${questionIndex + 1}) .options button`);
+            buttons.forEach(btn => (btn.disabled = true));
+
+            if (isCorrect) {
+                button.classList.add("correct");
+                score++;
+            } else {
+                button.classList.add("wrong");
+            }
+
+            if (document.querySelectorAll("button:not([disabled])").length === 0) {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            const percentage = (score / questions.length) * 100;
+            resultContainer.classList.remove("hidden");
+
+            if (percentage >= 80) {
+                resultContainer.innerHTML = `😊 Grattis! Du klarade ${percentage.toFixed(1)}%!`;
+            } else {
+                resultContainer.innerHTML = `😢 Tyvärr! Du klarade bara ${percentage.toFixed(1)}%. Försök igen!`;
+            }
+        }
+
+        loadQuiz();
+    </script>
+</body>
+</html>
